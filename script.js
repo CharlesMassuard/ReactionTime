@@ -1,39 +1,48 @@
 texte = document.getElementById("wait");
 indication = document.getElementById("indication");
 finish = false;
+en_cours = false;
+en_attente = false;
 
 window.addEventListener('load', function() {
     lancerLeJeu();
 });
 
 function lancerLeJeu(){
-    duree_attente = getRandomArbitrary(2000, 15000);
+    duree_attente = getRandomArbitrary(2000, 6000);
+    en_cours = true;
+    en_attente = true;
     this.setTimeout(function() {
-        document.body.style.backgroundColor = "green";
-        texte.innerHTML = "Cliquez sur l'écran";
-        texte.removeAttribute("id");
-        start = new Date().getTime();
-        document.addEventListener("click", function(){
-            end = new Date().getTime();
-            temps = (end - start);
-            texte.innerHTML = "Votre temps de réaction est de " + temps + "ms";
-            indication.style.display = "block";
-            finish = true;
-        })
+        if(en_cours){
+            document.body.style.backgroundColor = "green";
+            texte.innerHTML = "Cliquez sur l'écran";
+            start = new Date().getTime();
+            en_attente = false;
+            document.addEventListener("click", function(){
+                if(en_cours && !finish){
+                    end = new Date().getTime();
+                    temps = (end - start);
+                    texte.innerHTML = "Votre temps de réaction est de " + temps + "ms";
+                    indication.style.display = "block";
+                    finish = true;
+                    en_cours = false;
+                }
+            })
+        }
     }, duree_attente);
 }
 
 document.addEventListener("click", function(){
-    if(finish == false){
+    if(!finish && en_attente){
         texte.innerHTML = "Trop tôt";
-        texte.removeAttribute("id");
         finish = true;
-    } else {
-        finish = false;
+        en_cours = false;
+    } else if(finish && !en_cours){
         document.body.style.backgroundColor = "red";
+        indication.style.display = "none";
         texte.innerHTML = "Attendez que l'écran devienne vert";
-        texte.setAttribute("id", "wait");
         lancerLeJeu();
+        finish = false; 
     }
 });
 

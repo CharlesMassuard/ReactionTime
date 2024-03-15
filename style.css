@@ -13,15 +13,3 @@ body{
 #indication{
     display: none;
 }
-
-@keyframes wait {
-    0% {content: ".";}
-    33% {content: "..";}
-    66% {content: "...";}
-    100% {content: ".";}
-}
-
-#wait::after {
-    content: "";
-    animation: wait 1s steps(10, end) infinite;
-}
